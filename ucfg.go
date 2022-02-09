@@ -127,6 +127,20 @@ func (c *Config) GetFields() []string {
 	return names
 }
 
+func (c *Config) GetContainerId() string {
+	s := ""
+	for k := range c.fields.dict() {
+		item := c.fields.d[k]
+		if k == "paths" {
+			r, _ := item.reify(&options{})
+			ref := reflect.ValueOf(r)
+			s = fmt.Sprintf("%v", ref.Index(0))
+			break
+		}
+	}
+	return s
+}
+
 // Has checks if a field by the given path+idx configuration exists.
 // Has returns an error if the path can not be resolved because a primitive
 // value is found in the middle of the traversal.
