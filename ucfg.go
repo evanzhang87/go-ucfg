@@ -131,10 +131,15 @@ func (c *Config) GetContainerId() string {
 	s := ""
 	for k := range c.fields.dict() {
 		item := c.fields.d[k]
-		if k == "paths" {
+		if k == "containerid" {
 			r, _ := item.reify(&options{})
-			ref := reflect.ValueOf(r)
-			s = fmt.Sprintf("%v", ref.Index(0))
+			switch reflect.TypeOf(r).Kind() {
+			case reflect.Slice, reflect.Array:
+				ref := reflect.ValueOf(r)
+				s = fmt.Sprintf("%v", ref.Index(0))
+			case reflect.String:
+				s = reflect.ValueOf(r).String()
+			}
 			break
 		}
 	}
